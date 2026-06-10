@@ -19,7 +19,20 @@
     gtag('js', new Date());
     gtag('config', 'G-1T6ZWQ6B1Z');
   </script>
-
+  
+import type { AppProps } from 'next/app';
+import { Analytics } from '@vercel/analytics/next';
+ 
+function MyApp({ Component, pageProps }: AppProps) {
+  return (
+    <>
+      <Component {...pageProps} />
+      <Analytics />
+    </>
+  );
+}
+ 
+export default MyApp;
   <!-- ============================================================
        TIKTOK PIXEL
        1. Go to TikTok Ads Manager → Assets → Events → Web Events
