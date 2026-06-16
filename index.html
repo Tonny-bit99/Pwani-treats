@@ -642,10 +642,10 @@
 
 <script>
   const PRODUCTS = [
-    { id:1, name:"Cashewnuts (Korosho)", emoji:"🥜", price:150, desc:"Premium cashew nuts — hand-selected and sourced fresh from coastal farms. Choose roasted or plain.", sizes:["0.1 KG","1/4 KG","1/2 KG","1 KG"], prices:[150,350,650,1350], variants:["Roasted","Plain"] },
-    { id:2, name:"Mabuyu",              emoji:"🟤", price:50,  desc:"Baobab seeds coated in vibrant sugar — a timeless Mombasa street classic. Choose chilly or non-chilly.", sizes:["Small Pack","Large Pack"], prices:[50,100], variants:["Non-Chilly","Chilly"] },
-    { id:3, name:"Achari",              emoji:"🌶️", price:100, desc:"Boldly spiced coastal pickle — tangy, fiery and packed with flavour. Choose chilly or non-chilly.", sizes:["Per Pack"], prices:[100], variants:["Non-Chilly","Chilly"] },
-    { id:4, name:"Kashata",             emoji:"🍬", price:200, desc:"Traditional coconut or groundnut brittle, sweetened and pressed into satisfying chunks. A true coastal sweet.", sizes:["Per Pack"], prices:[200] },
+    { id:1, name:"Cashewnuts (Korosho)", emoji:"🥜", price:150, desc:"Premium cashew nuts — hand-selected and sourced fresh from coastal farms. Choose roasted or plain.", sizes:["0.1 KG","1/4 KG","1/2 KG","1 KG"], prices:[150,350,650,1350], variants:["Roasted","Plain"], outOfStock:true },
+    { id:2, name:"Mabuyu",              emoji:"🟤", price:50,  desc:"Baobab seeds coated in vibrant sugar — a timeless Mombasa street classic. Choose chilly or non-chilly.", sizes:["Small Pack","Large Pack"], prices:[50,100], variants:["Non-Chilly","Chilly"], outOfStock:false },
+    { id:3, name:"Achari",              emoji:"🌶️", price:100, desc:"Boldly spiced coastal pickle — tangy, fiery and packed with flavour. Choose chilly or non-chilly.", sizes:["Per Pack"], prices:[100], variants:["Non-Chilly","Chilly"], outOfStock:false },
+    { id:4, name:"Kashata",             emoji:"🍬", price:200, desc:"Traditional coconut or groundnut brittle, sweetened and pressed into satisfying chunks. A true coastal sweet.", sizes:["Per Pack"], prices:[200], outOfStock:false },
   ];
 
   let cart = {};
@@ -662,8 +662,9 @@
   function renderProducts() {
     const grid = document.getElementById('products-grid');
     grid.innerHTML = PRODUCTS.map(p => `
-      <div class="product-card">
-        <div class="product-img" style="background:${getBg(p.id)}; padding:0; overflow:hidden;">
+      <div class="product-card${p.outOfStock ? ' sold-out' : ''}">
+        <div class="product-img" style="background:${getBg(p.id)}; padding:0; overflow:hidden; position:relative;">
+        ${p.outOfStock ? '<div class="stock-badge">Sold Out</div>' : ''}
         ${PRODUCT_IMGS[p.id] ? `<img src="data:image/jpeg;base64,${PRODUCT_IMGS[p.id]}" style="width:100%;height:100%;object-fit:cover;display:block;" alt="${p.name}">` : `<span style="font-size:4rem">${p.emoji}</span>`}
       </div>
         <div class="product-body">
@@ -671,24 +672,24 @@
           <div class="product-desc">${p.desc}</div>
           ${p.variants ? `
           <div class="form-group" style="margin-bottom:0.6rem">
-            <select onchange="changeVariant(${p.id},this.value)" style="font-size:0.82rem; padding:0.5rem 0.7rem;">
+            <select onchange="changeVariant(${p.id},this.value)" style="font-size:0.82rem; padding:0.5rem 0.7rem;" ${p.outOfStock ? 'disabled' : ''}>
               ${p.variants.map((v,i)=>`<option value="${i}">${v}</option>`).join('')}
             </select>
           </div>` : ''}
           <div class="form-group" style="margin-bottom:0.8rem">
-            <select onchange="changeSize(${p.id},this.value)" style="font-size:0.82rem; padding:0.5rem 0.7rem;">
+            <select onchange="changeSize(${p.id},this.value)" style="font-size:0.82rem; padding:0.5rem 0.7rem;" ${p.outOfStock ? 'disabled' : ''}>
               ${p.sizes.map((s,i)=>`<option value="${i}">${s} — KSh ${p.prices[i].toLocaleString()}</option>`).join('')}
             </select>
           </div>
           <div class="product-footer">
             <div class="product-price" id="price-${p.id}">KSh ${p.prices[0].toLocaleString()}</div>
             <div class="qty-controls">
-              <button class="qty-btn" onclick="changeQty(${p.id},-1)">−</button>
+              <button class="qty-btn" onclick="changeQty(${p.id},-1)" ${p.outOfStock ? 'disabled' : ''}>−</button>
               <span class="qty-num" id="qty-${p.id}">1</span>
-              <button class="qty-btn" onclick="changeQty(${p.id},1)">+</button>
+              <button class="qty-btn" onclick="changeQty(${p.id},1)" ${p.outOfStock ? 'disabled' : ''}>+</button>
             </div>
           </div>
-          <button class="add-to-order" id="addbtn-${p.id}" onclick="addToCart(${p.id})">Add to Order</button>
+          <button class="add-to-order" id="addbtn-${p.id}" onclick="addToCart(${p.id})" ${p.outOfStock ? 'disabled' : ''}>${p.outOfStock ? 'Out of Stock' : 'Add to Order'}</button>
         </div>
       </div>
     `).join('');
